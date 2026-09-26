@@ -22,6 +22,35 @@ Create production-ready frontend projects with a complete
 npx create-fsd-architecture@latest my-app
 ```
 
+## 🤖 AI Agent Skill (Beta)
+
+Teach Codex, Claude Code, Cursor, and other Agent Skills-compatible coding
+agents how to translate natural-language scaffolding requests into verified FSD
+CLI commands:
+
+```bash
+npx skills add FSD-CLI/create-fsd-architecture --skill fsd-cli
+```
+
+The skill is currently available as `v1.0.0-beta.1`. Its commands and
+installation flow are verified, but agent behavior can vary across tools and
+existing project structures. Review generated changes before committing them.
+
+The skill inspects the project and uses the CLI for supported structural work
+instead of manually recreating equivalent folders. For example:
+
+- “Create a cart feature.”
+- “Add a product entity.”
+- “Create a checkout page.”
+- “Create a new Next.js project with Feature-Sliced Design.”
+
+The skill is deliberately execution-focused. Use the official
+[Feature-Sliced Design documentation](https://feature-sliced.design/) for the
+methodology; use the separate
+[`create-fsd-architecture` Agent Skill repository](https://github.com/FSD-CLI/create-fsd-architecture)
+for this tool's real commands, framework behavior, safety rules, and known
+limitations.
+
 The interactive flow selects the framework, API client, server state, client
 state, forms stack, package manager, dependency installation, and optional dev
 server startup.
