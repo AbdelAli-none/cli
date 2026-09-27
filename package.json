@@ -12,6 +12,10 @@
   "bugs": {
     "url": "https://github.com/FSD-CLI/cli/issues"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/ashrafmo-1?frequency=one-time&sponsor=ashrafmo-1"
+  },
   "bin": {
     "create-fsd-architecture": "bin/index.mjs"
   },
