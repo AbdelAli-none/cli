@@ -4,7 +4,7 @@
   "version": "2.6.0",
   "description": "Scaffold React, Next.js, Vue, Nuxt, and SvelteKit projects with Feature-Sliced Design architecture.",
   "main": "bin/index.mjs",
-  "homepage": "https://fsd-docs.vercel.app",
+  "homepage": "https://fsdcli.me",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FSD-CLI/cli.git"

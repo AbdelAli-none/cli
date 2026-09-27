@@ -71,7 +71,7 @@ export function getManagedProjectArtifacts(config) {
     serverState: config.serverState,
     clientState: config.clientState,
     forms: config.forms,
-    docsUrl: "https://fsd-docs.vercel.app",
+    docsUrl: "https://fsdcli.me",
     commands: {
       install: `${config.packageManager} install`,
       dev: run("dev"),
@@ -183,7 +183,7 @@ function writeFsdStackConfig(targetDir, config) {
     serverState: config.serverState,
     clientState: config.clientState,
     forms: config.forms,
-    docsUrl: "https://fsd-docs.vercel.app",
+    docsUrl: "https://fsdcli.me",
     commands: {
       install: `${config.packageManager} install`,
       dev: run("dev"),

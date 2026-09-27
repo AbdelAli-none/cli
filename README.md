@@ -6,7 +6,7 @@ Create production-ready frontend projects with a complete
 [![npm](https://img.shields.io/npm/v/create-fsd-architecture)](https://www.npmjs.com/package/create-fsd-architecture)
 [![downloads](https://img.shields.io/npm/dw/create-fsd-architecture)](https://www.npmjs.com/package/create-fsd-architecture)
 
-- Documentation: https://fsd-docs.vercel.app
+- Documentation: https://fsdcli.me
 - GitHub: https://github.com/FSD-CLI/cli
 
 ## Repository documentation
