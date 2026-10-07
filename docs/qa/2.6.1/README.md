@@ -53,8 +53,18 @@ node docs/qa/2.6.1/evidence/scripts/qa-matrix.mjs --in "<the --out folder>" --ou
 On Windows use backslashes and `cmd`; the commands are otherwise the same.
 
 - `--work` (or `QA_WORK`) is required and must be outside the repository. The runner creates its marker file there, refuses non-empty folders without the marker, and deletes only inside that folder.
+- `--out` must be a new or empty directory. Existing evidence is never overwritten. If omitted, each run creates a unique `evidence-<UUID>` folder inside the workspace and prints its path as `output` in the manifest. Use that folder with `qa-matrix.mjs --in`.
+- Every run writes `manifest.json`, including runs with only one group. The matrix renderer accepts both Windows and POSIX evidence paths on any supported OS.
 - `--groups a,b` runs part of the checks (default: provenance, create, generate, inspect, upgrade, legacy, doctor-managers, imports, probe, packed, published, templates-end). The `install` group creates projects with a real dependency install and runs each template's `ci` script; it is off by default because of the downloads.
 - `--cmd-timeout <seconds>` limits each command (default 180). A command that does not finish is recorded as FAIL with its signal.
 - `--audited <sha>` is the audited CLI commit (default is the one above).
 - The exit code is 0 when no executed case failed, 1 when at least one failed (expected on Windows because of `doctor`), and 2 for a usage error.
 - The runner does not modify the repository. Everything it creates is in the workspace and in the output folder.
+
+Run the evidence-tool regression checks with:
+
+```text
+node --test docs/qa/2.6.1/evidence/scripts/qa-tools.test.mjs
+```
+
+The committed r1/r2 logs and r2 script hash remain historical evidence of the original runs. Updated scripts do not change which revision produced those logs; new runs record their own script hash and checkout SHA.

@@ -28,7 +28,7 @@ const rows = fs.readFileSync(path.join(IN, "results.jsonl"), "utf8").split("\n")
 
 const relDir = path.relative(path.dirname(OUT), IN).split(path.sep).join("/");
 const cell = (s) => String(s ?? "-").replace(/\|/g, "/").replace(/\r?\n/g, " ");
-const link = (label, file) => `[${label}](${relDir}/${file.split(path.sep).join("/")})`;
+const link = (label, file) => `[${label}](${relDir}/${file.replaceAll("\\", "/")})`;
 
 const count = (s) => rows.filter((r) => r.status === s).length;
 const executed = count("PASS") + count("FAIL");

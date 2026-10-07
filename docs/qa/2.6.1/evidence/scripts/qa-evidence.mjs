@@ -44,7 +44,7 @@ function usage(msg) {
 const workArg = opt("work", process.env.QA_WORK);
 if (!workArg) usage("Missing --work <dir> (or QA_WORK). The workspace must be outside the repository.");
 const WORK = path.resolve(workArg);
-const OUT = path.resolve(opt("out", path.join(HERE, "..", "validation-r2")));
+const OUT = path.resolve(opt("out", path.join(WORK, `evidence-${crypto.randomUUID()}`)));
 const LOGS = path.join(OUT, "logs");
 const CMD_TIMEOUT_MS = Number(opt("cmd-timeout", 180)) * 1000; // per command, seconds on the command line
 const AUDITED = opt("audited", "9640dcc6ab47ebfaedda60ff80572a3ce08e9562");
@@ -60,6 +60,9 @@ const within = (parent, child) => {
 };
 if (WORK === ROOT || within(ROOT, WORK) || within(WORK, ROOT)) usage(`Workspace must be outside the repository (${ROOT}): ${WORK}`);
 if (WORK === path.parse(WORK).root || WORK === os.homedir()) usage(`Refusing to use ${WORK} as a workspace.`);
+if (fs.existsSync(OUT) && (!fs.statSync(OUT).isDirectory() || fs.readdirSync(OUT).length)) {
+  usage(`Output must be a new or empty directory; refusing to overwrite existing evidence: ${OUT}`);
+}
 if (fs.existsSync(WORK)) {
   const entries = fs.readdirSync(WORK);
   if (entries.length && !entries.includes(MARKER)) usage(`${WORK} is not empty and has no ${MARKER} marker. Use an empty or dedicated folder.`);
@@ -106,7 +109,7 @@ function run(id, group, cmd, args, { cwd = WORK, expect = 0, timeout = CMD_TIMEO
     id, group, status: ok ? "PASS" : "FAIL", command: [cmd, ...args].map(quote).join(" "), cwd,
     exit: r.status, signal: r.signal ?? null, spawnError: r.error ? `${r.error.code ?? ""} ${r.error.message}` : null,
     expected: `exit ${expect}`, startedAt: started.toISOString(), endedAt: ended.toISOString(), durationMs: ended - started,
-    stdout: path.relative(OUT, out), stderr: path.relative(OUT, err), note,
+    stdout: path.relative(OUT, out).split(path.sep).join("/"), stderr: path.relative(OUT, err).split(path.sep).join("/"), note,
   });
   return r;
 }
@@ -137,12 +140,12 @@ const lsRemote = (repo) => {
 };
 const templateShasStart = {};
 
-// ---------- provenance ----------
-if (want("provenance")) {
+// Every run needs metadata, including runs that omit the provenance checks.
+{
   const head = git("rev-parse", "HEAD").stdout.trim();
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
   const manifest = {
-    createdAt: new Date().toISOString(), repoRoot: ROOT, workspace: WORK, repoHead: head,
+    createdAt: new Date().toISOString(), repoRoot: ROOT, workspace: WORK, output: OUT, repoHead: head,
     branch: git("rev-parse", "--abbrev-ref", "HEAD").stdout.trim(), auditedCliSha: AUDITED, cliVersion: pkg.version,
     scriptSha256: crypto.createHash("sha256").update(fs.readFileSync(fileURLToPath(import.meta.url))).digest("hex"),
     os: `${os.type()} ${os.release()} ${os.arch()}`, node: process.version,
@@ -151,6 +154,11 @@ if (want("provenance")) {
   };
   fs.writeFileSync(path.join(OUT, "manifest.json"), JSON.stringify(manifest, null, 2));
   console.log(JSON.stringify(manifest, null, 2));
+}
+
+// ---------- provenance ----------
+if (want("provenance")) {
+  const head = git("rev-parse", "HEAD").stdout.trim();
   const dirty = git("status", "--porcelain", "--", ".", ":(exclude)docs/qa").stdout.trim();
   check("R2-PROV-01", "provenance", "repository tree (outside docs/qa) is clean", dirty === "", dirty || "clean");
   const diff = spawnSync("git", ["diff", "--quiet", AUDITED, "HEAD", "--", ".", ":(exclude)docs"], { cwd: ROOT });
