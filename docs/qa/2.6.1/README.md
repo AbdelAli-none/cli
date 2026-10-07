@@ -68,3 +68,5 @@ node --test docs/qa/2.6.1/evidence/scripts/qa-tools.test.mjs
 ```
 
 The committed r1/r2 logs and r2 script hash remain historical evidence of the original runs. Updated scripts do not change which revision produced those logs; new runs record their own script hash and checkout SHA.
+
+Verification of the updated tooling: [EVIDENCE-TOOLS-VERIFICATION.md](EVIDENCE-TOOLS-VERIFICATION.md).
